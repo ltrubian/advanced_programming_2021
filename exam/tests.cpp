@@ -58,6 +58,7 @@ SCENARIO("handling multiple stacks") {
     stack_pool<int, uint16_t> pool{};
     WHEN("we create two stacks") {
       auto l1 = pool.new_stack();
+      std::cout << "error here\n";
       l1 = pool.push(3, l1);
       l1 = pool.push(2, l1);
       l1 = pool.push(1, l1);
