@@ -103,7 +103,6 @@ SCENARIO("using nodes of a deleted stack") {
       l1 = pool.free_stack(l1);
 
       THEN("l1 is now empty") { REQUIRE(pool.empty(l1)); }
-      std::cout << pool.free_nodes << std::endl;
       WHEN("we create a new stack we use the old nodes") {
         // auto l2 = pool.new_stack();
 
@@ -141,7 +140,7 @@ SCENARIO("using iterators"){
     l1 = pool.push(5, l1);
     l1 = pool.push(3, l1);
     l1 = pool.push(5, l1);
-    
+
     auto l2 = pool.new_stack();
     l2 = pool.push(8, l2);
     l2 = pool.push(9, l2);
@@ -154,6 +153,7 @@ SCENARIO("using iterators"){
     l2 = pool.push(9, l2);
     l2 = pool.push(9, l2);
     l2 = pool.push(7, l2);
+
 
     THEN("find the max on l1"){
       auto m = std::max_element(pool.begin(l1), pool.end(l1));
