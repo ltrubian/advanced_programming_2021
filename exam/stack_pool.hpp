@@ -9,12 +9,12 @@ class stack_pool{
   using stack_type = N;
   using value_type = T;
   using size_type = typename std::vector<node_t>::size_type;
-  stack_type free_nodes; // at the beginning, it is empty
   
-  node_t& node(stack_type x) noexcept { return pool[x-1]; }
-  const node_t& node(stack_type x) const noexcept { return pool[x-1]; }
 
   public:
+  stack_type free_nodes; // at the beginning, it is empty
+  node_t& node(stack_type x) noexcept { return pool[x-1]; }
+  const node_t& node(stack_type x) const noexcept { return pool[x-1]; }
   stack_pool() : free_nodes{0} {} ;
   explicit stack_pool(size_type n) : free_nodes{0} { pool.reserve(n); }; // reserve n nodes in the pool
     
@@ -46,55 +46,54 @@ class stack_pool{
   const stack_type& next(stack_type x) const noexcept{ return node(x).next; };
 
   stack_type push(const T& val, stack_type head) {
+    if (capacity() <= free_nodes ){
+      pool.reserve(pool.size()+2);
+    }
     if (empty(free_nodes)){
-      std::cout << "here\n";
       pool[0].value = val;
-      pool[0].next = head - 1 ;
-      (free_nodes) += 1;
-      pool[free_nodes].next = pool.end();
+      pool[0].next = 0;
+      ++(free_nodes);
+      pool[free_nodes].next = stack_type(0);
       return 1;
     }
     else{
-      std::cout << "or here??\t" << free_nodes << "\n";
       stack_type new_head{free_nodes};
-      pool[new_head].value = val;
-      pool[new_head].next = head - 1;
       if ( pool[free_nodes].next == stack_type(0)){
-        (free_nodes) += 1;
-        // ++(free_nodes);
+        ++(free_nodes);
         pool[free_nodes].next = stack_type(0);        
       }
       else{
         free_nodes = pool[free_nodes].next;
       }
+      pool[new_head].value = val;
+      pool[new_head].next = head - 1;
       return ++new_head;
     }
 
   } ;
   stack_type push(T&& val, stack_type head){
+    if (pool.size()  <= free_nodes ){
+      pool.reserve(pool.size()+2);
+    }
+
     if (empty(free_nodes)){
-      // std::cout << "here\t"<< free_nodes << "\n";
       pool[0].value = val;
-      pool[0].next = head - 1 ;
-      (free_nodes) += 1;
-      // std::cout << "here\t"<< free_nodes << "\n";
-      // ++(free_nodes);
+      pool[0].next = 0;
+      ++(free_nodes);
       pool[free_nodes].next = stack_type(0);
       return 1;
     }
     else{
-      // std::cout << "or here??\t" << free_nodes << "\n";
       stack_type new_head{free_nodes};
-      pool[new_head].value = val;
-      pool[new_head].next = head - 1;
       if ( pool[free_nodes].next == stack_type(0)){
-        (free_nodes) += 1;
-        // ++(free_nodes);
-        pool[free_nodes].next = stack_type(0);        
+        ++(free_nodes);
+        pool[free_nodes].next = stack_type(0); 
       }
       else{
         free_nodes = pool[free_nodes].next;
       }
+      pool[new_head].value = val;
+      pool[new_head].next = head;
       return ++new_head;
     }
   };
@@ -106,9 +105,9 @@ class stack_pool{
 
   stack_type free_stack(stack_type x){
     stack_type y{x};
-    while ( node(y).next != stack_type{0} )
-      ++y;
+    while ( node(y).next != stack_type(0) )
+      y = node(y).next;
     pop(y);
-    return stack_type{0};
+    return stack_type(0);
   }; // free entire stack
 };

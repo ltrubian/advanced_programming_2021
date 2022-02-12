@@ -58,7 +58,6 @@ SCENARIO("handling multiple stacks") {
     stack_pool<int, uint16_t> pool{};
     WHEN("we create two stacks") {
       auto l1 = pool.new_stack();
-      std::cout << "error here\n";
       l1 = pool.push(3, l1);
       l1 = pool.push(2, l1);
       l1 = pool.push(1, l1);
@@ -104,14 +103,14 @@ SCENARIO("using nodes of a deleted stack") {
       l1 = pool.free_stack(l1);
 
       THEN("l1 is now empty") { REQUIRE(pool.empty(l1)); }
-
+      std::cout << pool.free_nodes << std::endl;
       WHEN("we create a new stack we use the old nodes") {
-        auto l2 = pool.new_stack();
+        // auto l2 = pool.new_stack();
 
-        l2 = pool.push(4, l2);
-        l2 = pool.push(5, l2);
+        l1 = pool.push(4, l1);
+        l1 = pool.push(5, l1);
 
-        auto tmp = l2;
+        auto tmp = l1;
         REQUIRE(pool.value(tmp) == 5);
         tmp = pool.next(tmp);
         REQUIRE(pool.value(tmp) == 4);
