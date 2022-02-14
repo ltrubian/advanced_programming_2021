@@ -22,21 +22,21 @@ SCENARIO("basic operations on stack") {
       auto l = pool.new_stack();
       
       THEN("the stack is empty")
-	REQUIRE(pool.empty(l));
+  REQUIRE(pool.empty(l));
 
       WHEN("we add one value") {
         l = pool.push(1, l);
         REQUIRE(pool.value(l) == 1);
       
 
-	WHEN("we delete the only node") {
-	  l = pool.pop(l);
-	  THEN("the stack is empty again")
-	    REQUIRE(pool.empty(l));
+  WHEN("we delete the only node") {
+    l = pool.pop(l);
+    THEN("the stack is empty again")
+      REQUIRE(pool.empty(l));
 
-	  //empty stacks point to pool.end()
-	  REQUIRE(l == pool.end());
-	}
+    //empty stacks point to pool.end()
+    REQUIRE(l == pool.end());
+  }
       }
 
       WHEN("we add two values") {
@@ -103,13 +103,14 @@ SCENARIO("using nodes of a deleted stack") {
       l1 = pool.free_stack(l1);
 
       THEN("l1 is now empty") { REQUIRE(pool.empty(l1)); }
+
       WHEN("we create a new stack we use the old nodes") {
-        // auto l2 = pool.new_stack();
+        auto l2 = pool.new_stack();
 
-        l1 = pool.push(4, l1);
-        l1 = pool.push(5, l1);
+        l2 = pool.push(4, l2);
+        l2 = pool.push(5, l2);
 
-        auto tmp = l1;
+        auto tmp = l2;
         REQUIRE(pool.value(tmp) == 5);
         tmp = pool.next(tmp);
         REQUIRE(pool.value(tmp) == 4);
@@ -140,7 +141,7 @@ SCENARIO("using iterators"){
     l1 = pool.push(5, l1);
     l1 = pool.push(3, l1);
     l1 = pool.push(5, l1);
-
+    
     auto l2 = pool.new_stack();
     l2 = pool.push(8, l2);
     l2 = pool.push(9, l2);
@@ -153,7 +154,6 @@ SCENARIO("using iterators"){
     l2 = pool.push(9, l2);
     l2 = pool.push(9, l2);
     l2 = pool.push(7, l2);
-
 
     THEN("find the max on l1"){
       auto m = std::max_element(pool.begin(l1), pool.end(l1));
