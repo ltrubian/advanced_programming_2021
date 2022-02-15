@@ -1,7 +1,3 @@
-#include<iostream>
-#include<vector>
-// #include<iterator>
-
 template <typename T, typename N = std::size_t>
 class stack_pool;
 
@@ -91,7 +87,6 @@ class stack_pool{
  
   template <typename X>
   stack_type _push(X&& val, stack_type head) {
-      // std::cout << "before capacity\t" << capacity() << "\tval\t" << std::forward<X>(val) << std::endl;
     if (static_cast<int>(capacity()) - 1 - static_cast<int>(free_nodes) <= 0 ){
       pool.reserve(capacity() + stack_type(2));
       pool.resize(capacity());
