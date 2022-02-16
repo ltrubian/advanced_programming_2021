@@ -16,7 +16,7 @@ class Iter {
 
   explicit Iter(N ptr, stack_pool<T,N>* _pool) : m_ptr{ptr}, pool{_pool} {}
 
-  T operator*() const { return pool->value(m_ptr); }
+  T& operator*() const { return pool->value(m_ptr); }
 
   Iter operator++() { 
     m_ptr = pool->next(m_ptr);
@@ -51,8 +51,8 @@ class stack_pool{
   const node_t& node(stack_type x) const noexcept { return pool[x-1]; }
   
   public:
-  stack_pool() : free_nodes{0}{} ;
-  explicit stack_pool(size_type n) : free_nodes{0} { pool.reserve(n); }; // reserve n nodes in the pool
+  stack_pool() : pool{}, free_nodes{stack_type(0)} {} ; // pool{} is not required
+  explicit stack_pool(size_type n) : stack_pool{} { pool.reserve(n); }; // reserve n nodes in the pool, delegating constructor
   
   using iterator = Iter<T,N>;
   using const_iterator = Iter<const T,N>;
@@ -68,15 +68,17 @@ class stack_pool{
     
   stack_type new_stack() const noexcept {return stack_type(0);}; // return an empty stack
 
-  void reserve(size_type n) {pool.reserve(n); }; // reserve n nodes in the pool
+  void reserve(size_type n) { // reserve n nodes in the pool
+    std::vector<node_t> tmp(n);
+    for ( std::size_t i {0}; i < pool.size() ; ++i)
+      tmp[i] = std::move(pool[i]);
+    pool = std::move(tmp);
+  }; 
   size_type capacity() const noexcept{ return pool.capacity(); }; // the capacity of the pool
 
   bool empty(stack_type x) const noexcept {return ( x > 0 ) ? false : true ;} ;
 
   stack_type end() const noexcept { return stack_type(0); }
-
-  // my
-  stack_type _free() const noexcept {return free_nodes;}
 
   T& value(stack_type x) noexcept { return node(x).value; };
   const T& value(stack_type x) const noexcept { return node(x).value; };
@@ -88,8 +90,7 @@ class stack_pool{
   template <typename X>
   stack_type _push(X&& val, stack_type head) {
     if (static_cast<int>(capacity()) - 1 - static_cast<int>(free_nodes) <= 0 ){
-      pool.reserve(capacity() + stack_type(2));
-      pool.resize(capacity());
+      reserve(capacity() + stack_type(2));
     }
 
     if (empty(free_nodes)){ 
@@ -132,5 +133,14 @@ class stack_pool{
     pop(y);
     return stack_type(0);
   }; // free entire stack
+
+  stack_type concatenate (stack_type low, const stack_type high) noexcept {
+    stack_type tmp{high};
+    while ( node(tmp).next != stack_type(0) )
+      tmp = node(tmp).next;
+    node(tmp).next = low - 1;
+    return high;
+  };
+
 };
 
