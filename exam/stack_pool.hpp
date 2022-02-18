@@ -89,8 +89,8 @@ class stack_pool{
  
   template <typename X>
   stack_type _push(X&& val, stack_type head) {
-    if (static_cast<int>(capacity()) - 1 - static_cast<int>(free_nodes) <= 0 ){
-      reserve(capacity() + stack_type(2));
+    if (static_cast<int>(capacity()) - static_cast<int>(free_nodes) <= 0 ){
+      reserve(capacity() + std::size_t(1) + capacity()/2 ) ;
     }
 
     if (empty(free_nodes)){ 
