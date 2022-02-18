@@ -1,4 +1,5 @@
-#include<iostream>
+#include <vector>
+
 template <typename T, typename N = std::size_t>
 class stack_pool;
 
@@ -87,7 +88,6 @@ class stack_pool{
   stack_type& next(stack_type x) noexcept { return node(x).next; };
   const stack_type& next(stack_type x) const noexcept{ return node(x).next; };
 
- 
   template <typename X>
   stack_type _push(X&& val, stack_type head) {
     if (static_cast<int>(capacity()) - static_cast<int>(free_nodes) <= 0 ){
@@ -123,14 +123,6 @@ class stack_pool{
     pop(y);
     return stack_type(0);
   }; // free entire stack
-
-  stack_type concatenate (stack_type low, const stack_type high) noexcept {
-    stack_type tmp{high};
-    while ( node(tmp).next != stack_type(0) )
-      tmp = node(tmp).next;
-    node(tmp).next = low - 1;
-    return high;
-  };
 
 };
 
