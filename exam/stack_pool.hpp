@@ -1,3 +1,4 @@
+#include<iostream>
 template <typename T, typename N = std::size_t>
 class stack_pool;
 
@@ -92,27 +93,16 @@ class stack_pool{
     if (static_cast<int>(capacity()) - static_cast<int>(free_nodes) <= 0 ){
       reserve(capacity() + std::size_t(1) + capacity()/2 ) ;
     }
-
-    if (empty(free_nodes)){ 
-      pool[0].value = std::forward<X>(val);
-      pool[0].next = 0;
-      ++free_nodes;
-      pool[free_nodes].next = stack_type(0);
-      return 1;
-    }
-    else{
-      stack_type new_head{free_nodes};
-      if ( pool[free_nodes].next == stack_type(0)){
-        ++free_nodes;
-        pool[free_nodes].next = stack_type(0); 
-      }
-      else{
-        free_nodes = pool[free_nodes].next;
-      }
-      pool[new_head].value = std::forward<X>(val);
-      pool[new_head].next = ( head == stack_type(0) ) ? stack_type(0) : stack_type(head);
-      return ++new_head;
-    }
+    stack_type new_head{free_nodes};
+    
+    if ( empty(free_nodes) || pool[free_nodes].next == stack_type(0))
+      pool[++free_nodes].next = stack_type(0);
+    else
+      free_nodes = pool[free_nodes].next;
+    
+    pool[new_head].value = std::forward<X>(val);
+    pool[new_head].next = ( head == stack_type(0) ) ? stack_type(0) : stack_type(head);
+    return ++new_head;
   };
 
   stack_type push(const T& val, stack_type head) { return _push(val, head); } ;
