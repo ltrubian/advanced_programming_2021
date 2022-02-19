@@ -70,7 +70,7 @@ class stack_pool{
     
   stack_type new_stack() const noexcept {return stack_type(0);}; // return an empty stack
 
-  void reserve(size_type n) { // reserve n nodes in the pool
+  void reserve(const size_type n) { // reserve n nodes in the pool
     std::vector<node_t> tmp(n);
     for ( std::size_t i {0}; i < pool.size() ; ++i)
       tmp[i] = std::move(pool[i]);
@@ -78,15 +78,15 @@ class stack_pool{
   }; 
   size_type capacity() const noexcept{ return pool.capacity(); }; // the capacity of the pool
 
-  bool empty(stack_type x) const noexcept {return ( x > 0 ) ? false : true ;} ;
+  bool empty(const stack_type x) const noexcept {return ( x > 0 ) ? false : true ;} ;
 
   stack_type end() const noexcept { return stack_type(0); }
 
-  T& value(stack_type x) noexcept { return node(x).value; };
-  const T& value(stack_type x) const noexcept { return node(x).value; };
+  T& value(const stack_type x) noexcept { return node(x).value; };
+  const T& value(const stack_type x) const noexcept { return node(x).value; };
 
-  stack_type& next(stack_type x) noexcept { return node(x).next; };
-  const stack_type& next(stack_type x) const noexcept{ return node(x).next; };
+  stack_type& next(const stack_type x) noexcept { return node(x).next; };
+  const stack_type& next(const stack_type x) const noexcept{ return node(x).next; };
 
   template <typename X>
   stack_type _push(X&& val, stack_type head) {
