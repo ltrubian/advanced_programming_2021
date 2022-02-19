@@ -1,5 +1,5 @@
 #include <vector>
-
+#include <iostream>
 template <typename T, typename N = std::size_t>
 class stack_pool;
 
@@ -93,16 +93,20 @@ class stack_pool{
     if (static_cast<int>(capacity()) - static_cast<int>(free_nodes) <= 0 ){
       reserve(capacity() + std::size_t(1) + capacity()/2 ) ;
     }
-    stack_type new_head{free_nodes};
+
+    stack_type new_head = empty(free_nodes)? stack_type(1) : free_nodes;
     
-    if ( empty(free_nodes) || pool[free_nodes].next == stack_type(0))
-      pool[++free_nodes].next = stack_type(0);
-    else
-      free_nodes = pool[free_nodes].next;
+    if ( empty(free_nodes) || empty(next(free_nodes)) ){
+      free_nodes = stack_type(new_head + 1);
+      next(free_nodes) = stack_type(0);
+    }
+    else      
+      free_nodes = next(free_nodes);
     
-    pool[new_head].value = std::forward<X>(val);
-    pool[new_head].next = ( head == stack_type(0) ) ? stack_type(0) : stack_type(head);
-    return ++new_head;
+    value(new_head) = std::forward<X>(val);
+    next(new_head) = ( empty(head) ) ? stack_type(0) : stack_type(head);
+
+    return new_head;
   };
 
   stack_type push(const T& val, stack_type head) { return _push(val, head); } ;
@@ -110,17 +114,20 @@ class stack_pool{
   stack_type push(T&& val, stack_type head){ return _push(std::move(val), head);  };
 
   stack_type pop (stack_type x) noexcept {
-    auto tmp = node(x).next;
+    auto tmp{node(x).next};
     node(x).next = free_nodes;
-    free_nodes = x - 1;
+    free_nodes = x ;
     return tmp;
   }; // delete first node
 
   stack_type free_stack (stack_type x) noexcept {
     stack_type y{x};
+    
     while ( node(y).next != stack_type(0) )
       y = node(y).next;
-    pop(y);
+    
+    node(y).next = free_nodes;
+    free_nodes = x ;
     return stack_type(0);
   }; // free entire stack
 
