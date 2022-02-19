@@ -98,13 +98,13 @@ class stack_pool{
     
     if ( empty(free_nodes) || empty(next(free_nodes)) ){
       free_nodes = stack_type(new_head + 1);
-      next(free_nodes) = stack_type(0);
+      next(free_nodes) = end();
     }
     else      
       free_nodes = next(free_nodes);
     
     value(new_head) = std::forward<X>(val);
-    next(new_head) = ( empty(head) ) ? stack_type(0) : head;
+    next(new_head) = ( empty(head) ) ? end() : head;
 
     return new_head;
   };
@@ -123,12 +123,12 @@ class stack_pool{
   stack_type free_stack (stack_type x) noexcept {
     stack_type y{x};
     
-    while ( node(y).next != stack_type(0) )
+    while ( node(y).next != end() )
       y = node(y).next;
     
     node(y).next = free_nodes;
     free_nodes = x ;
-    return stack_type(0);
+    return end();
   }; // free entire stack
 
 };
