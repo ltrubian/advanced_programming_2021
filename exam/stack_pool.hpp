@@ -4,7 +4,7 @@ template <typename T, typename N = std::size_t>
 class stack_pool;
 
 template <typename T, typename N = std::size_t>
-class Iter {
+class Iter : stack_pool<T,N>{
   private:
   N m_ptr;
   stack_pool<T,N>* pool;
@@ -59,14 +59,14 @@ class stack_pool{
   using iterator = Iter<T,N>;
   using const_iterator = Iter<const T,N>;
 
-  iterator begin(stack_type x) noexcept {return iterator{x, this}; } ;
-  iterator end(stack_type ) noexcept { return iterator{stack_type(0), this}; }; // this is not a typo
+  iterator begin(stack_type x)  {return iterator{x, this}; } ;
+  iterator end(stack_type )  { return iterator{stack_type(0), this}; }; // this is not a typo
     
-  const_iterator begin(stack_type x) const noexcept {return iterator{x, this};};
-  const_iterator end(stack_type ) const noexcept { return iterator{stack_type(0), this}; }; 
+  const_iterator begin(stack_type x) const  {return iterator{x, this};};
+  const_iterator end(stack_type ) const  { return iterator{stack_type(0), this}; }; 
   
-  const_iterator cbegin(stack_type x) const noexcept {return iterator{x, this};};
-  const_iterator cend(stack_type ) const noexcept { return iterator{stack_type(0), this}; };
+  const_iterator cbegin(stack_type x) const  {return iterator{x, this};};
+  const_iterator cend(stack_type ) const  { return iterator{stack_type(0), this}; };
     
   stack_type new_stack() const noexcept {return stack_type(0);}; // return an empty stack
 
