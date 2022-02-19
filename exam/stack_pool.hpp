@@ -91,7 +91,7 @@ class stack_pool{
   template <typename X>
   stack_type _push(X&& val, stack_type head) {
     if (static_cast<int>(capacity()) - static_cast<int>(free_nodes) <= 0 ){
-      reserve(capacity() + std::size_t(1) + capacity()/2 ) ;
+      reserve(capacity() + stack_type(1) + capacity()/2 ) ;
     }
 
     stack_type new_head = empty(free_nodes)? stack_type(1) : free_nodes;
@@ -104,7 +104,7 @@ class stack_pool{
       free_nodes = next(free_nodes);
     
     value(new_head) = std::forward<X>(val);
-    next(new_head) = ( empty(head) ) ? stack_type(0) : stack_type(head);
+    next(new_head) = ( empty(head) ) ? stack_type(0) : head;
 
     return new_head;
   };
